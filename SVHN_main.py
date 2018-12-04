@@ -130,7 +130,7 @@ class ResCNN(torch.nn.Module):
         return x
 
 
-layers = [8, 4, 2, 2]
+layers = [2, 2, 2, 2]
 channels = [32, 64, 128, 256]
 #training
 batch_size = 256
@@ -138,7 +138,7 @@ epmax = 60
 wd = 1e-5
 # dynamic lr
 init_lr = 1e-3
-step_sz = 10
+step_sz = 20
 gamma = 0.1
 
 
@@ -212,7 +212,7 @@ def train(train_loader, test_loader):
             te_min_index = len(te_ls) - 1
         if te_acc[-1] > te_acc[te_acc_max_index]:
             te_acc_max_index = len(te_acc) - 1
-            if(epoch+1>=20):
+            if(epoch+1>=10):
                 torch.save(CNN.state_dict(), './log/' + T + '.p')
         rec = (
             'epoch=' + str(epoch + 1) +
@@ -229,7 +229,7 @@ def train(train_loader, test_loader):
             epoches = range(1, epoch+2)
             plt.plot(epoches, tr_ls, label='Trainning Loss', color='blue')
             plt.plot(epoches, te_ls, label='Validation Loss', color='red')
-            plt.plot(epoches, te_acc,label='Validation Acc', color='yellow')
+            plt.plot(epoches, te_acc,label='Validation Acc', color='purple')
             plt.grid()
             plt.xlabel('epoches')
             plt.ylabel('Loss')
@@ -253,7 +253,7 @@ def train(train_loader, test_loader):
     epoches = range(1, epmax + 1)
     plt.plot(epoches, tr_ls, label='Trainning Loss', color='blue')
     plt.plot(epoches, te_ls, label='Validation Loss', color='red')
-    plt.plot(epoches, te_acc, label='Validation Acc', color='yellow')
+    plt.plot(epoches, te_acc, label='Validation Acc', color='purple')
     plt.xlabel('epoches')
     plt.ylabel('Loss')
     plt.grid()
@@ -275,6 +275,7 @@ def train(train_loader, test_loader):
     # torch.save(CNN.state_dict(), './single_weight_'+str(hs)+'_'+str(hl)+'.p')
     # return CNN
 
-trainset, trainloder = get_ds(batch_size)
-testset, testloder = get_ds(batch_size, 'test')
-train(trainloder, testloder)
+if __name__ == '__main__':
+    trainset, trainloder = get_ds(batch_size)
+    testset, testloder = get_ds(batch_size, 'test')
+    train(trainloder, testloder)
