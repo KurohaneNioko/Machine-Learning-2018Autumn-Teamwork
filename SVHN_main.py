@@ -164,6 +164,7 @@ def train(train_loader, test_loader):
         'weight_decay =', wd, 'init_lr=', init_lr,
         'step_size=', step_sz, 'gamma=', gamma, file=logfile)
     logfile.flush()
+    weight_file_count = 0
     for epoch in range(epmax):
         # print('current epoch = %d' % (epoch+1))
         train_loss = 0.0
@@ -210,10 +211,14 @@ def train(train_loader, test_loader):
 
         if te_ls[-1] < te_ls[te_min_index]:
             te_min_index = len(te_ls) - 1
+            if (epoch + 1 >= 10):
+                weight_file_count += 1
+                torch.save(CNN.state_dict(), './log/' + T + str(weight_file_count) + '.p')
         if te_acc[-1] > te_acc[te_acc_max_index]:
             te_acc_max_index = len(te_acc) - 1
             if(epoch+1>=10):
-                torch.save(CNN.state_dict(), './log/' + T + '.p')
+                weight_file_count += 1
+                torch.save(CNN.state_dict(), './log/' + T + str(weight_file_count) + '.p')
         rec = (
             'epoch=' + str(epoch + 1) +
             ' BestLoss: ' + str(numpy.min(te_ls)) + ' @' + str(te_min_index + 1) +
