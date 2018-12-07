@@ -11,7 +11,7 @@ trs = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
-t = 190433
+t = '02173516'
 layers = [2, 8, 16, 2]
 channels = [32, 64, 128, 256]
 
@@ -27,6 +27,7 @@ pics = [None for _ in range(1800)]
 results = []
 for e in fileorder:
     img = Image.open(folder+str(e)+'.jpg')
+    # print(np.array(img).shape)
     img = trs(img).cuda()
     img = torch.unsqueeze(img, 0)
     pics[e] = img

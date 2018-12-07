@@ -9,7 +9,7 @@ import sys
 def get_ds(batch_size, label='train'):
     if label == 'train':
         trs = torchvision.transforms.Compose([
-            torchvision.transforms.RandomHorizontalFlip(),
+            # torchvision.transforms.RandomHorizontalFlip(),
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
@@ -48,13 +48,13 @@ class ResidualUnit(torch.nn.Module):
             in_channel, out_channel, bias=with_bias,
             kernel_size=3, stride=conv_step, padding=1
         )
-        self.batch_norm1 = torch.nn.BatchNorm2d(out_channel)
+        # self.batch_norm1 = torch.nn.BatchNorm2d(out_channel)
         self.active_func1 = torch.nn.ReLU(inplace=True)
         self.conv_2 = torch.nn.Conv2d(
             out_channel, out_channel, bias=with_bias,
             kernel_size=3, padding=1
         )
-        self.batch_norm2 = torch.nn.BatchNorm2d(out_channel)
+        # self.batch_norm2 = torch.nn.BatchNorm2d(out_channel)
         self.input_fitter = input_fitter
 
         self.active_func2 = torch.nn.ReLU(inplace=True)
@@ -64,10 +64,10 @@ class ResidualUnit(torch.nn.Module):
         residual = x
 
         out = self.conv_1(x)
-        out = self.batch_norm1(out)
+        #out = self.batch_norm1(out)
         out = self.active_func1(out)
         out = self.conv_2(out)
-        out = self.batch_norm2(out)
+        #out = self.batch_norm2(out)
         # print(out.shape, x.shape, sep='\n')
         if out.shape != residual.shape:
             residual = self.input_fitter(residual)
@@ -88,7 +88,7 @@ class ResCNN(torch.nn.Module):
             in_channels=3, out_channels=channel_list[0],
             kernel_size=3, stride=2, padding=1, bias=with_bias
         )
-        self.batch_norm = torch.nn.BatchNorm2d(channel_list[0])
+        # self.batch_norm = torch.nn.BatchNorm2d(channel_list[0])
         self.active_func = torch.nn.ReLU(inplace=True)
         self.maxpool = torch.nn.MaxPool2d(
             kernel_size=3, stride=2, padding=1
@@ -120,7 +120,7 @@ class ResCNN(torch.nn.Module):
         # x: batch, channel, pic_dim1, pic_dim2
         x = self.conv_begin(x)
         # x: batch, channel_list[0], pic_dim1, pic_dim2
-        x = self.batch_norm(x)
+        #x = self.batch_norm(x)
         x = self.active_func(x)
         x = self.maxpool(x)
         x = self.subnet(x)
@@ -130,7 +130,7 @@ class ResCNN(torch.nn.Module):
         return x
 
 
-layers = [2, 2, 2, 2]
+layers = [2, 8, 16, 2]
 channels = [32, 64, 128, 256]
 #training
 batch_size = 256
@@ -213,12 +213,12 @@ def train(train_loader, test_loader):
             te_min_index = len(te_ls) - 1
             if (epoch + 1 >= 10):
                 weight_file_count += 1
-                torch.save(CNN.state_dict(), './log/' + T + str(weight_file_count) + '.p')
+                torch.save(CNN.state_dict(), './log/' + T + '_'+str(weight_file_count) + '.p')
         if te_acc[-1] > te_acc[te_acc_max_index]:
             te_acc_max_index = len(te_acc) - 1
             if(epoch+1>=10):
                 weight_file_count += 1
-                torch.save(CNN.state_dict(), './log/' + T + str(weight_file_count) + '.p')
+                torch.save(CNN.state_dict(), './log/' + T + '_'+str(weight_file_count) + '.p')
         rec = (
             'epoch=' + str(epoch + 1) +
             ' BestLoss: ' + str(numpy.min(te_ls)) + ' @' + str(te_min_index + 1) +
