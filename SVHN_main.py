@@ -101,7 +101,7 @@ class ResCNN(torch.nn.Module):
                 torch.nn.Conv2d(
                     last_channel, channel,
                     kernel_size=1, stride=2, bias=False),
-                torch.nn.BatchNorm2d(channel),
+                # torch.nn.BatchNorm2d(channel),
             )
             subnet_list.append(
                 ResidualUnit(last_channel, channel, conv_step=2, input_fitter=fitter)
@@ -138,8 +138,8 @@ epmax = 60
 wd = 1e-5
 # dynamic lr
 init_lr = 1e-3
-step_sz = 20
-gamma = 0.1
+step_sz = 15
+gamma = 0.14
 
 
 def train(train_loader, test_loader):
@@ -149,8 +149,10 @@ def train(train_loader, test_loader):
     # print(CNN)
     lossfunc = torch.nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.Adam(CNN.parameters(), lr=init_lr, weight_decay=wd)
-    scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=step_sz, gamma=gamma)
+    # scheduler = torch.optim.lr_scheduler.StepLR(
+    #     optimizer, step_size=step_sz, gamma=gamma)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(
+            optimizer, milestones=[14, 22, 30, 38, 46, 54], gamma=gamma)
     tr_ls = []
     te_ls = []
     te_acc = []

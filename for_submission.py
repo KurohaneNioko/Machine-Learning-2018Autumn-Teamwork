@@ -11,7 +11,7 @@ trs = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
-t = '02173516'
+t = '045704_6'
 layers = [2, 8, 16, 2]
 channels = [32, 64, 128, 256]
 
